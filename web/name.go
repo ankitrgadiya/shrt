@@ -18,12 +18,7 @@ var bannedNames = map[string]bool{
 // Parse the shortcut name from the given URL path, given the base URL that is
 // handling the request.
 func parseName(base, path string) string {
-	t := path[len(base):]
-	ix := strings.Index(t, "/")
-	if ix == -1 {
-		return t
-	}
-	return t[:ix]
+	return strings.TrimPrefix(path, base)
 }
 
 // Clean a shortcut name. Currently this just means stripping any leading

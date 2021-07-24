@@ -11,7 +11,7 @@ namespace go {
     // Extract the name from the page location.
     var nameFrom = (uri: string) => {
         var parts = uri.substring(1).split('/');
-        return parts[1];
+        return parts.slice(1).join('/');
     };
 
     // Called with the window resizes.

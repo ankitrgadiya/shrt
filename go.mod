@@ -1,15 +1,15 @@
-module github.com/kellegous/go
+module argc.in/shrt
 
-go 1.13
+go 1.17
 
 require (
-	cloud.google.com/go v0.38.0
-	github.com/a-urth/go-bindata v0.0.0-20180209162145-df38da164efc // indirect
-	github.com/googleapis/gax-go v2.0.2+incompatible // indirect
-	github.com/spf13/pflag v1.0.5
-	github.com/spf13/viper v1.5.0
-	github.com/syndtr/goleveldb v1.0.0
-	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
-	google.golang.org/api v0.14.0
-	google.golang.org/grpc v1.21.0
+	github.com/gorilla/mux v1.8.0
+	github.com/mattn/go-sqlite3 v1.14.10
+	github.com/pkg/errors v0.8.1
+	github.com/spf13/cobra v1.3.0
+)
+
+require (
+	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/spf13/pflag v1.0.5 // indirect
 )

@@ -1,8 +1,12 @@
-FROM golang:alpine
+# Step 1: Build
+FROM golang:1.17-alpine AS builder
+RUN apk --update --no-cache add musl-dev gcc
 
-COPY . /src
-RUN cd /src/cmd/go && go build -mod=vendor -o /usr/bin/go
+WORKDIR /app
+COPY . /app
+RUN CC=/usr/bin/x86_64-alpine-linux-musl-gcc go build --ldflags '-linkmode external -extldflags "-static" -s -w' -o /shrt main.go
 
-EXPOSE 8067
-
-CMD ["/usr/bin/go", "--data=/data"]
+# Step 2: Final
+FROM alpine:latest
+COPY --from=builder /shrt /usr/local/bin/shrt
+ENTRYPOINT ["/usr/local/bin/shrt"]

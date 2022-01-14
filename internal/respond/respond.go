@@ -11,20 +11,33 @@ import (
 	"argc.in/shrt/internal/model"
 )
 
-func WithStatus(w http.ResponseWriter, _ *http.Request, code int) {
+func WithStatus(w http.ResponseWriter, r *http.Request, code int) {
 	w.WriteHeader(code)
+	resp := new(Msg)
+
+	if code >= 200 && code < 300 {
+		resp.Ok = true
+	}
+
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		WithError(w, r, http.StatusInternalServerError, err)
+	}
 }
 
 func With(w http.ResponseWriter, r *http.Request, code int, data interface{}) {
 	w.WriteHeader(code)
 
-	var resp interface{}
+	var resp *Msg
 
 	switch v := data.(type) {
 	case *model.Route:
-		resp = &msgRoute{Ok: true, Route: v}
+		resp = &Msg{Route: v}
 	case []model.Route:
-		resp = &msgRoutes{Ok: true, Routes: v}
+		resp = &Msg{Routes: v}
+	}
+
+	if code >= 200 && code < 300 {
+		resp.Ok = true
 	}
 
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
@@ -36,7 +49,7 @@ func WithError(w http.ResponseWriter, _ *http.Request, code int, err error) {
 	log.Printf("E: %+v", err)
 	w.WriteHeader(code)
 
-	resp := &msgErr{Ok: false, Error: err.Error()}
+	resp := &Msg{Ok: false, Error: err.Error()}
 
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		log.Printf("E: marshalling error response: %+v", err)

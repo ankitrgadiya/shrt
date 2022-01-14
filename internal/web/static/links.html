@@ -14,8 +14,10 @@
         <ul>
             {{ range $i, $route := . }}
             <li>
-                <a href="{{ $route.URL }}">go/{{ $route.Slug }}</a><br />
-                <a href="{{ $route.URL }}" class="full-url">{{ $route.URL }}</a>
+                <details>
+                    <summary><a href="{{ $route.URL }}">go/{{ $route.Slug }}</a></summary>
+                    <a href="{{ $route.URL }}" class="full-url">{{ $route.URL }}</a>
+                </details>
             </li>
             {{ end }}
         </ul>

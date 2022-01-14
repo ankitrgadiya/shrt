@@ -19,10 +19,10 @@ assets:
     cp {{webdir}}/*.svg {{staticdir}}/
 
 build: assets
-    go build -o golinks main.go
+    go build -o shrt main.go
 
 serve: assets
     go run main.go serve
 
 clean:
-    rm -f {{justfile_directory()}}/golinks
+    rm -f {{justfile_directory()}}/shrt

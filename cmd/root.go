@@ -2,9 +2,16 @@ package cmd
 
 import "github.com/spf13/cobra"
 
+const (
+	_cloudflareAccessHeader = "cf-access-token"
+)
+
 var (
 	databasePath string
 	listenAddr   string
+	serverAddr   string
+	accessToken  string
+	localOp      bool
 )
 
 func Execute() error {
@@ -22,7 +29,7 @@ func NewCommand() *cobra.Command {
 
 	c.PersistentFlags().StringVar(&databasePath, "database", "routes.db", "Path for SQLite Database")
 
-	c.AddCommand(serveCommand())
+	c.AddCommand(serveCommand(), createCommand(), deleteCommand(), listCommand())
 
 	return c
 }

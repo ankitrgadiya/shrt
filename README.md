@@ -1,52 +1,64 @@
-# A "go" short-link service
+# Shrt - A "go" short-link service
 
-## Background
-The first time I encountered "go" links was at Google. Anyone on the corporate
-network could register a URL shortcut and it would redirect the user to the
-appropriate page. So for instance, if you wanted to find out more about BigTable,
-you simply directed your browser at http://go/bigtable and you would be redirected to
-something about the BigTable data storage system. I was later told that the
-first go service at Google was written by [Benjamin Staffin](https://www.linkedin.com/in/benjaminstaffin)
-to end the never-ending stream of requests for internal CNAME entries. He
-described it as AOL keywords for the corporate network. These days if you go to
-any reasonably sized company, you are likely to find a similar system. Etsy made
-one after seeing that Twitter had one ... it's a contagious and useful little
-tool. So contagious, in fact, that many former Googlers that I know have built
-or contributed to a similar system post-Google. I am no different, this is my
-"go" link service.
+This is my fork of the [kellegous/go](https://github.com/kellegous/go) server
+[[Original
+Readme](https://github.com/kellegous/go/blob/043936a95042fbbdcec4ff5263325607797ea54a/README.md)]
 
-One slight difference between this go service and Google's is that this one is also
-capable of generating short links for you.
+## Differences
+
+* SQLite based backend
+* Uses Go's builtin embedding for static assets
+* Command-line interface for CRUD to the server as well as database directly 
 
 ## Installation
-This tool is written in Go (ironically) and can be easily installed  and started
-with the following commands.
 
+Shrt can directly be installed using the Go toolchain by running the following
+command.
+
+``` sh
+go install argc.in/shrt@latest
 ```
-GOPATH=`pwd` go install github.com/kellegous/go
-bin/go
+
+The SQLite library [mattn/go-sqlite3](https://github.com/mattn/go-sqlite3)
+supports different compilation strategies. By default, Go will try to compile
+the the SQLite library using the available C Compiler toolchain. On most linux
+systems that would be GLibC and GCC. This can be configured by build and link
+flags described [here](https://github.com/mattn/go-sqlite3#compilation).
+
+I personally prefer a statically linked binary that can be compiled using Musl
+and GCC. On Alpine Linux, it can be done by running the following command. On
+other Linux distributions, the CC variable can be configured to point to the
+Musl GCC binary. Also note the "-s -w" flags to strip off the symbol tables and
+debugging information to reduce the size.
+
+``` sh
+CC=/usr/bin/x86_64-alpine-linux-musl-gcc go build --ldflags '-linkmode external -extldflags "-static" -s -w' -o shrt main.go
 ```
 
-By default, the service will put all of its data in the directory `data` and will
-listen to requests on the port `8067`. Both of these, however, are easily configured
-using the `--data=/path/to/data` and `--addr=:80` command line flags.
+Alternatively, I also provide a Docker image through Github Packages with
+precompiled binary.
 
-## DNS Setup
-To get the most benefit from the service, you should setup a DNS entry on your
-local network, `go.corp.mycompany.com`. Make sure that corp.mycompany.com is in
-the search domains for each user on the network. This is usually easily accomplished
-by configuring your DHCP server. Now, simply typing "go" into your browser should
-take you to the service, where you can register shortcuts. Obviously, those
-shortcuts will also be available by typing "go/shortcut".
+``` sh
+docker run -it \
+    -v /path/to/data:/data \
+    -p 8080:8080 \
+    ghcr.io/ankitrgadiya/shrt@master serve --database /data/routes.db --addr 0.0.0.0:8080
+```
 
-## Using the Service
-Once you have it all setup, using it is pretty straight-forward.
+## Backup
 
-#### Create a new shortcut
-Type `go/edit/my-shortcut` and enter the URL.
+SQLite provides backup API that is available through its command-line tool. This
+can be used to backup the database.
 
-#### Visit a shortcut
-Type `go/my-shortcut` and you'll be redirected to the URL.
+``` sh
+sqlite3 /data/routes.db ".backup /path/to/backup.db"
+```
 
-#### Shorten a URL
-Type `go` and enter the URL.
+Alternatively, Shrt can be backed up remotely by using the Shrt command-line
+tool. It generates a tab-separated list of all the links configured. SQLite's
+command-line tool can import the TSV data directly for restoring.
+
+``` sh
+shrt list --server https://SERVER_ADDRESS
+```
+

@@ -34,7 +34,7 @@ func serve(c *cobra.Command, _ []string) error {
 		return err
 	}
 
-	r := mux.NewRouter()
+	r := mux.NewRouter().StrictSlash(true)
 	api.RegisterRoutes(r, store)
 	web.RegisterRoutes(r, store)
 

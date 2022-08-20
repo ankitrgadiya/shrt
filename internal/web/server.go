@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
 	"argc.in/shrt/internal/datastore"
@@ -40,7 +41,8 @@ func (i *impl) Static(w http.ResponseWriter, r *http.Request) {
 func (i *impl) Redirect(w http.ResponseWriter, r *http.Request) {
 	route := &model.Route{Slug: getSlug(r)}
 	if len(route.Slug) == 0 {
-		respond.WithRedirect(w, r, "/edit/")
+		respond.WithRedirect(w, r, "/edit/"+uniqueSlug())
+		return
 	}
 
 	err := i.store.Query(r.Context(), route)
@@ -80,4 +82,8 @@ func (i *impl) AllLinks(w http.ResponseWriter, r *http.Request) {
 
 func getSlug(r *http.Request) string {
 	return strings.TrimPrefix(r.URL.Path, "/")
+}
+
+func uniqueSlug() string {
+	return uuid.NewString()
 }

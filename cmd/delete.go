@@ -23,8 +23,6 @@ func deleteCommand() *cobra.Command {
 		SilenceUsage: true,
 	}
 
-	c.Flags().StringVar(&accessToken, "access", "", "Cloudflare Access Token (optional)")
-	c.Flags().StringVar(&serverAddr, "server", "https://argv.in", "Address for the web server (optional)")
 	c.Flags().BoolVar(&localOp, "local", false, "Run operation against local database")
 
 	return c
@@ -46,8 +44,9 @@ func deleteOnServer(r *model.Route) error {
 		return err
 	}
 
-	if len(accessToken) != 0 {
-		req.Header.Set(_cloudflareAccessHeader, accessToken)
+	if len(clientID) != 0 {
+		req.Header.Set(_headerClientID, clientID)
+		req.Header.Set(_headerClientSecret, clientSecret)
 	}
 
 	resp, err := new(http.Client).Do(req)

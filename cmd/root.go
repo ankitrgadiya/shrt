@@ -3,15 +3,18 @@ package cmd
 import "github.com/spf13/cobra"
 
 const (
-	_cloudflareAccessHeader = "cf-access-token"
+	_headerClientID     = "CF-Access-Client-Id"
+	_headerClientSecret = "CF-Access-Client-Secret"
 )
 
 var (
 	databasePath string
 	listenAddr   string
 	serverAddr   string
-	accessToken  string
 	localOp      bool
+	clientID     string
+	clientSecret string
+	confPath     string
 )
 
 func Execute() error {
@@ -27,7 +30,10 @@ func NewCommand() *cobra.Command {
 		},
 	}
 
+	cobra.OnInitialize(initConfig)
+
 	c.PersistentFlags().StringVar(&databasePath, "database", "routes.db", "Path for SQLite Database")
+	c.PersistentFlags().StringVar(&confPath, "config", "", "Path to the config file")
 
 	c.AddCommand(serveCommand(), createCommand(), deleteCommand(), listCommand())
 

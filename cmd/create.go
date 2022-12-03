@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -47,7 +48,12 @@ func createOnServer(w io.Writer, r *model.Route) error {
 		return err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/api/url/%s", serverAddr, r.Slug), &buf)
+	ep, err := url.JoinPath(serverAddr, "api", "url", r.Slug)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, ep, &buf)
 	if err != nil {
 		return err
 	}

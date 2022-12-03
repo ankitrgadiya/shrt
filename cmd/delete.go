@@ -3,8 +3,8 @@ package cmd
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -39,7 +39,12 @@ func delete(c *cobra.Command, args []string) error {
 }
 
 func deleteOnServer(r *model.Route) error {
-	req, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("%s/api/url/%s", serverAddr, r.Slug), nil)
+	ep, err := url.JoinPath(serverAddr, "api", "url", r.Slug)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, ep, nil)
 	if err != nil {
 		return err
 	}

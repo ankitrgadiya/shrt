@@ -1,12 +1,12 @@
 package cmd
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"text/tabwriter"
 
 	"github.com/pkg/errors"
@@ -40,7 +40,12 @@ func list(c *cobra.Command, args []string) error {
 }
 
 func listOnServer(w io.Writer) error {
-	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/api/urls/", serverAddr), nil)
+	ep, err := url.JoinPath(serverAddr, "api", "urls")
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, ep, nil)
 	if err != nil {
 		return err
 	}

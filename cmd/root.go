@@ -35,7 +35,7 @@ func NewCommand() *cobra.Command {
 	c.PersistentFlags().StringVar(&databasePath, "database", "routes.db", "Path for SQLite Database")
 	c.PersistentFlags().StringVar(&confPath, "config", "", "Path to the config file")
 
-	c.AddCommand(serveCommand(), createCommand(), deleteCommand(), listCommand())
+	c.AddCommand(serveCommand(), createCommand(), deleteCommand(), listCommand(), openCommand())
 
 	return c
 }

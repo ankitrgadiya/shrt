@@ -13,7 +13,8 @@ type config struct {
 		ClientID     string `yaml:"clientID"`
 		ClientSecret string `yaml:"clientSecret"`
 	} `yaml:"access"`
-	Server string `yaml:"server"`
+	Server   string `yaml:"server"`
+	Database string `yaml:"database"`
 }
 
 func initConfig() {
@@ -50,6 +51,7 @@ func initConfigE() error {
 	serverAddr = c.Server
 	clientID = c.Access.ClientID
 	clientSecret = c.Access.ClientSecret
+	databasePath = c.Database
 
 	return nil
 }

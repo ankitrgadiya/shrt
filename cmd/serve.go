@@ -23,8 +23,6 @@ func serveCommand() *cobra.Command {
 		RunE:  serve,
 	}
 
-	c.Flags().StringVar(&listenAddr, "addr", ":8080", "Address for the web server")
-
 	return c
 }
 
@@ -39,7 +37,7 @@ func serve(c *cobra.Command, _ []string) error {
 	web.RegisterRoutes(r, store)
 
 	s := http.Server{
-		Addr:    listenAddr,
+		Addr:    serverAddr,
 		Handler: r,
 	}
 
@@ -47,7 +45,7 @@ func serve(c *cobra.Command, _ []string) error {
 	defer cancel()
 
 	go func() {
-		log.Println("starting server")
+		log.Printf("starting server %s\n", serverAddr)
 
 		if err := s.ListenAndServe(); err != nil {
 			if errors.Is(err, http.ErrServerClosed) {

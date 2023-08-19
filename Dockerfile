@@ -1,5 +1,5 @@
 # Step 1: Build
-FROM golang:1.19-alpine AS builder
+FROM golang:1.21-alpine AS builder
 RUN apk --update --no-cache add musl-dev gcc
 
 WORKDIR /app
